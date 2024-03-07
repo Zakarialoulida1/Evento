@@ -22,6 +22,7 @@ class Evenement extends Model
         'status',
         'user_id',
         'image',
+        
     ];
 
     public function category()
@@ -33,10 +34,9 @@ public function organizer()
 {
     return $this->belongsTo(User::class, 'user_id');
 }
-
 public function reservations()
 {
-    return $this->belongsToMany(User::class, 'event_reservations');
+    return $this->hasMany(Reservation::class, 'Event_id');
 }
 
 }

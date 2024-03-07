@@ -15,81 +15,80 @@
         </div>
     @endif
 
-    @foreach ($events as $event)
-        <div class=" flex items-center justify-center m-3 px-8">
-            <div class="flex flex-col w-full bg-white rounded shadow-lg sm:w-3/4 md:w-1/2 lg:w-3/5">
-                <div class="w-full h-64 bg-top bg-cover rounded-t"
-                    style="background-image: url({{ asset('storage/' . $event->image) }})"></div>
-                <div class="flex flex-col w-full md:flex-row">
-                    <div
-                        class="flex flex-row justify-around p-4 font-bold leading-none text-gray-800 uppercase bg-gray-400 rounded md:flex-col md:items-center md:justify-center md:w-1/4">
-                        <div class="md:text-3xl">{{ date('M', strtotime($event->date)) }}</div>
-                        <div class="md:text-6xl">{{ date('j', strtotime($event->date)) }}</div>
+    {{-- <form action="" method="GET">
+        <label for="category" class="mr-2">Filter by Category:</label>
+        <select name="category" id="category" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+    </form>
+    <!-- Category Filter Dropdown --> --}}
+    <label for="category" class="mr-2">Filter by Category:</label>
+    <select name="category" id="category">
+        <option value="">All Categories</option>
+        @foreach ($categories as $category)
+            <option value="{{ $category->id }}">{{ $category->name }}</option>
+        @endforeach
+    </select>
 
-                    </div>
-                    <div class="p-4 font-normal text-gray-800 md:w-3/4">
-                        <div class="flex justify-between items-center ">
-                            <h1 class="mb-4 text-4xl font-bold leading-none tracking-tight text-gray-800">
-                                {{ $event->title }}</h1>
-                            @if ($event->Status == 'not_confirmed_yet')
-                                <p class="flex justify-center items-center text-red-500">Not confirmed yet
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4"
-                                        viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-                                        <path fill="#ff3300"
-                                            d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                                    </svg>
-                                </p>
-                            @else
-                                <p class="flex justify-center items-center text-green-500">Confirmed
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4"
-                                        viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-                                        <path fill="#4dff00"
-                                            d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
-                                    </svg>
-                                </p>
-                            @endif
+    <input type="text" id="searchInput" placeholder="Recherche...">
+    <div id="searchResults"></div>
+    
+  
 
-                        </div>
-                        <p class="leading-normal">{{ $event->description }}</p>
-                        <div class="flex flex-row items-center mt-4 text-gray-700">
-                            <div class="w-1/2">
-                                {{ $event->category->name }}
-                            </div>
-
-                            <form action="{{ route('Reservation.store', ['Evenement' => $event->id]) }}" method="POST">
-                                @csrf
-                                <button type="submit"
-                                    class="flex items-center justify-center w-full py-2 mt-4 font-medium text-black  rounded hover:bg-blue-500">
-                                    Reserve Your Place
-                                    <img src="{{ asset('storage/images/reserve.png') }}" class="w-12 m-2"
-                                        alt="reservation">
-                                </button>
-                            </form>
-                            <div class="w-1/2 flex justify-end">
-                                <form action="{{ route('Evenement.details', ['Evenement' => $event]) }}"
-                                    method="POST">
-                                    @csrf
-
-                                    <button>See More</button>
-
-                                </form>
-                            </div>
-
-                            <div class="w-1/2 flex justify-end">
-                                <form action="{{ route('evenement.destroy', ['evenement' => $event->id]) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500">Delete Event</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endforeach
-    <div class="mt-4">
-        {{ $events->links() }}
+<h1>Filter</h1>
+    <div id="events-list" >
+        @include('evenement.events_partial', ['events' => $events])
     </div>
+
+
+
+    <script>
+
+
+
+document.getElementById('searchInput').addEventListener('input', function() {
+          var searchTerm = this.value.trim().toLowerCase();
+          var entrepriseCards = document.querySelectorAll('.entreprise-card');
+
+          entrepriseCards.forEach(function(card) {
+              var nom = card.getAttribute('data-nom').toLowerCase();
+              if (nom.includes(searchTerm)) {
+                  card.style.display = 'block';
+              } else {
+                  card.style.display = 'none';
+              }
+          });
+      });
+
+document.getElementById('category').addEventListener('change', function() {
+    var categoryId = this.value;
+
+    // Send Ajax request to server
+    axios.get('/events/filter', {
+        params: {
+            category_id: categoryId
+        }
+    })
+    .then(function(response) {
+        // Update events list with filtered events
+        document.getElementById('events-list').innerHTML = response.data;
+
+        // Update pagination links with category filter
+        var paginationLinks = document.querySelectorAll('.pagination a');
+        paginationLinks.forEach(function(link) {
+            var href = link.getAttribute('href');
+            link.setAttribute('href', href + (href.includes('?') ? '&' : '?') + 'category=' + categoryId);
+        });
+    })
+    .catch(function(error) {
+        console.error('Error fetching filtered events:', error);
+    });
+});
+
+    </script>
 </x-app-layout>

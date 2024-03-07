@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('Event_id')->references('id')->on('evenements')->onDelete('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->enum('status',['non_valide','validé'])->default('non_valide');  
+            
             $table->timestamps();
         });
     }

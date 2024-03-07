@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'image',
+        'role',
     ];
 
     /**
@@ -49,9 +50,9 @@ class User extends Authenticatable
     return $this->hasMany(Evenement::class);
 }
 
+
 public function reservations()
 {
-    return $this->belongsToMany(Evenement::class, 'event_reservations');
+    return $this->hasone(Reservation::class, 'user_id');
 }
-
 }
